@@ -22,9 +22,16 @@ export class Chat extends Model<Chat> {
   })
   id: number;
 
+  @ApiProperty({ example: 'Sellers', description: 'Chat title' })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  title: string;
+
   @BelongsToMany(() => User, () => Participant)
   participants: Participant[];
 
-  @HasMany(() => Message)
+  @HasMany(() => Message, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   messages: Message[];
 }

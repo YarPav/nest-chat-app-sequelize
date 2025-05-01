@@ -6,10 +6,14 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private authService: AuthService,
+  ) {}
 
   canActivate(
     context: ExecutionContext,
@@ -17,18 +21,27 @@ export class JwtAuthGuard implements CanActivate {
     const req = context.switchToHttp().getRequest();
 
     try {
-      const authHeader = req.headers.authorization;
-      const [bearer, token] = authHeader.split(' ');
+      const user = this.authService.getUserFromRequest(req);
 
-      if (bearer !== 'Bearer' || !token) {
-        throw new UnauthorizedException({ message: 'Invalid token' });
+      if (!user) {
+        return false;
       }
 
-      req.user = this.jwtService.verify(token);
-
+      req.user = user;
       return true;
     } catch (e) {
       throw new UnauthorizedException({ message: 'Unauthorized' });
     }
+  }
+
+  getCookie(name: string, cookie: string): string {
+    const matches = cookie.match(
+      new RegExp(
+        '(?:^|; )' +
+          name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') +
+          '=([^;]*)',
+      ),
+    );
+    return matches ? decodeURIComponent(matches[1]) : undefined;
   }
 }

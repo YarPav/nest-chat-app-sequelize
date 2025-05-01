@@ -1,7 +1,8 @@
 import {
   BelongsTo,
   Column,
-  DataType, ForeignKey,
+  DataType,
+  ForeignKey,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -11,10 +12,21 @@ import { Chat } from '../chat/chat.model';
 
 interface MessagesCreationAttrs {
   text: string;
+  chatId: number;
+  authorId: number;
+}
+
+export interface MessageAttributes {
+  id: number;
+  text: string;
+  chatId: number;
+  authorId: number;
+  chat?: Chat;
+  author?: User;
 }
 
 @Table({ tableName: 'messages' })
-export class Message extends Model<Message, MessagesCreationAttrs> {
+export class Message extends Model<MessageAttributes, MessagesCreationAttrs> {
   @ApiProperty({ example: 1, description: 'Id' })
   @Column({
     type: DataType.INTEGER,
@@ -41,7 +53,7 @@ export class Message extends Model<Message, MessagesCreationAttrs> {
 
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER })
-  authorIdNew: number;
+  authorId: number;
 
   @ApiProperty({ example: 'Alex', description: 'Message author' })
   @BelongsTo(() => User)

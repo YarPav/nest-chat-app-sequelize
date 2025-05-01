@@ -1,4 +1,5 @@
 import {
+  BelongsTo,
   Column,
   DataType,
   ForeignKey,
@@ -8,6 +9,12 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../users/users.model';
 import { Chat } from './chat.model';
+
+export enum EParticipantRole {
+  OWNER = 'owner',
+  ADMIN = 'admin',
+  USER = 'user',
+}
 
 @Table({ tableName: 'participants', createdAt: false, updatedAt: false })
 export class Participant extends Model<Participant> {
@@ -27,4 +34,14 @@ export class Participant extends Model<Participant> {
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER })
   userId: number;
+
+  @ApiProperty({ example: 'admin', description: 'Роль участника чата' })
+  @Column({
+    type: DataType.ENUM(...Object.values(EParticipantRole)),
+    allowNull: false,
+    defaultValue: EParticipantRole.USER,
+  })
+  role: EParticipantRole;
+  // @BelongsTo(() => Role)
+  // role: Role;
 }

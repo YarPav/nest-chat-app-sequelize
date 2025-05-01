@@ -7,8 +7,6 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '../roles/roles.model';
-import { UserRoles } from '../roles/user-roles.model';
 import { Message } from '../message/message.model';
 import { Participant } from '../chat/participant.model';
 import { Chat } from '../chat/chat.model';
@@ -61,9 +59,6 @@ export class User extends Model<User, UserCreationAttrs> {
     allowNull: true,
   })
   banReason: string;
-
-  @BelongsToMany(() => Role, () => UserRoles)
-  roles: Role[];
 
   @BelongsToMany(() => Chat, () => Participant)
   chats: Chat[];
