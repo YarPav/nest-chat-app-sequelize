@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://y6e0pbuxm.localto.net';
+export const BASE_URL = 'http://localhost:3000';
 
 export const validatedAuthToken = () => {
   // TODO сделать проверку не протух ли токен
