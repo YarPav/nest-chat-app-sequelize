@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Chats</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Bootstrap 5 (вместо 4) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #f8f9fa;
+    }
+
+    .chat-list-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      max-width: 1024px;
+      margin: 0 auto;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .chat-list-header {
+      padding: 1rem;
+      border-bottom: 1px solid #dee2e6;
+      background-color: #fff;
+      flex-shrink: 0;
+    }
+
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .chat-list ul {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .chat-list ul li {
+      margin-bottom: 0.75rem;
+    }
+
+    .chat-list ul li a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: 500;
+    }
+
+    .chat-list ul li a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .chat-list-wrapper {
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-list-wrapper">
+  <div class="chat-list-header d-flex justify-content-between align-items-center">
+    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#new_chat_modal" id="new_chat_modal_button">
+      New Chat
+    </button>
+    <h5 class="mb-0">Chats</h5>
+    <p style="margin: 0" id="current-user-name"></p>
+  </div>
+
+  <div class="chat-list">
+    <ul id="chats_list">
+      {{#each chats}}
+        <li data-chat-id="{{id}}"><a href="/chat/{{id}}">{{title}}</a></li>
+      {{/each}}
+    </ul>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="new_chat_modal" tabindex="-1" aria-labelledby="newChatModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newChatModalLabel">New chat</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="create-chat-form">
+          <div class="mb-3">
+            <label for="title-input" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title-input" placeholder="Enter chat title" name="title">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button id="create-chat-button" form="create-chat-form" type="submit" class="btn btn-primary">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.socket.io/4.3.2/socket.io.min.js" crossorigin="anonymous"></script>
+<!--<script src="../js/chat.js" type="module"></script>-->
+<script src="../js/chats.js" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+</body>
+</html>

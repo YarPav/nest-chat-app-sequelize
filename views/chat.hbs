@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }}</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #f8f9fa;
+    }
+
+    .chat-wrapper {
+      height: 100dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 600px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      /*border: 1px solid #ccc;*/
+      border-radius: 0;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .chat-header {
+      color: white;
+      background-color: #9e9e9e;
+      flex-shrink: 0;
+      padding: 10px 16px;
+      /*background-color: #fff;*/
+      /*border-bottom: 1px solid #000;*/
+      /*border-right: 1px solid #000;*/
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .messages ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .messages ul li {
+      margin-bottom: 0.5rem;
+    }
+
+    .chat-footer {
+      border-top: 1px solid #ccc;
+      padding: 10px;
+      display: flex;
+      position: sticky;
+      bottom: 0;
+      background-color: white;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      .chat-container {
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand text-primary" href="/chat/all">All chats</a>
+  </div>
+</nav>
+
+<div class="chat-wrapper">
+  <div class="chat-container">
+
+    <!-- Панель с названием чата -->
+    <div class="chat-header" id="chat-header" data-bs-toggle="modal" data-bs-target="#chatInfoModal">
+      {{ data.title }}
+    </div>
+
+    <!-- Область с сообщениями -->
+    <div class="messages">
+      <ul id="data-container">
+      </ul>
+    </div>
+
+    <!-- Форма отправки сообщения -->
+    <form id="send-message-form" class="chat-footer d-flex">
+      <input class="form-control" id="message-text" placeholder="Say something..." style="flex: 1; margin-right: 10px;" />
+      <button id="create-chat-button" type="submit" class="btn btn-primary">▶</button>
+    </form>
+
+  </div>
+</div>
+
+<!-- Модальное окно с инфой о чате -->
+<div class="modal fade" id="chatInfoModal" tabindex="-1" aria-labelledby="chatInfoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="chatInfoModalLabel">{{ data.title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h2>Participants</h2>
+        <form id="participant-action-form">
+          <ul style="list-style: none; padding-left: 0;" id="participants-list">
+            {{#each data.participants}}
+              <li>
+                <div data-user-id="{{this.id}}" class="bg-secondary p-2 rounded mb-2 text-light gap-3 d-flex justify-content-between align-items-center">
+                  {{this.email}}
+                  {{#if (eq ../myId this.id)}}
+                    <p class="bg-primary p-2 m-0 rounded text-light">Me</p>
+                  {{else}}
+                    {{#if ../isOwner}}
+                        <button type="submit" form="participant-action-form" data-user-id="{{this.id}}" data-action="remove" class="btn btn-danger">X</button>
+                    {{/if}}
+                  {{/if}}
+                </div>
+              </li>
+            {{/each}}
+          </ul>
+        </form>
+        {{#if isOwner }}
+          <h2>Invite someone</h2>
+          <form id="invite-user-form">
+            <select id="potential-participants" class="form-multi-select" aria-label="Default select example" name="userId">
+              <option value="-1" selected>Select user</option>
+            </select>
+          </form>
+        {{/if}}
+      </div>
+      {{#if isOwner}}
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button id="add-user-button" form="invite-user-form" type="submit" class="btn btn-primary">Add User</button>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.socket.io/4.3.2/socket.io.min.js" crossorigin="anonymous"></script>
+<script src="../js/chat.js" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+</body>
+</html>
